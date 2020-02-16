@@ -8,8 +8,14 @@ class HangpersonGame
   # def initialize()
   # end
   
+  
+  
+ attr_accessor :word, :guesses, :wrong_guesses
+  
   def initialize(word)
-    @word = word
+    @word = word.downcase
+    @guesses = ''
+    @wrong_guesses = '' 
   end
 
   # You can test it by running $ bundle exec irb -I. -r app.rb
@@ -23,5 +29,48 @@ class HangpersonGame
       return http.post(uri, "").body
     }
   end
+
+  def word_with_guesses
+    result = ''
+    @word.split('').each do |str|
+      if !@guesses.include? str
+        result << '-'
+      else
+        result << str
+      end
+    end
+    
+    return result
+  end
+
+  def guess(str)
+if str.nil? or /[^A-Za-z]/.match(str) != nil or str == ''
+		  raise ArgumentError.new("Invalid Letter. Please guess again")
+end
+	str.downcase!
+  
+	  if @guesses.include? str or @wrong_guesses.include? str
+		  return false
+	  end
+  
+	  if @word.include? str
+		  @guesses = @guesses + str
+		  return true
+	  else
+		  @wrong_guesses = @wrong_guesses + str
+		  return true
+	  end
+  end
+def check_win_or_lose
+    
+    if @wrong_guesses.length >= 7
+      return :lose  
+    elsif word_with_guesses.downcase == @word.downcase
+      return :win
+    else
+      return :play
+    end
+end  
+ 
 
 end
